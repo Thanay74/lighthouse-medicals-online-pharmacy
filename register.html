@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.cdnfonts.com/css/graphik-trial" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="css/register.css">
+    <title>REGISTER PAGE</title>
+</head>
+<body>
+    <center>
+        <div class="register-container">
+            <h2>Register</h2>
+            <div class="register_box">
+                <form id="registerForm" enctype="multipart/form-data">
+                    <div class="input-grp">
+                        <input type="text" id="name" name="name" required>
+                        <label for="name" placeholder=" ">Name:</label>
+                    </div>
+
+                    <div class="input-grp">
+                        <input type="email" id="email" name="email" required>
+                        <label for="email">Email:</label>
+                    </div>
+
+                    <div class="input-grp">
+                        <input type="tel" id="phone" name="phone" required pattern="[0-9]{10}">
+                        <label for="phone">Phone Number:</label>
+                    </div>
+
+                    <div class="input-grp">
+                        <textarea id="address" name="address" required></textarea>
+                        <label for="address">Address:</label>
+                    </div>
+
+                    <!-- New file upload section -->
+                    <div class="file-upload">
+                        <label class="file-upload-label" for="aadhaar_doc">
+                            <span id="upload-text">Click to upload Aadhaar Card</span>
+                            <input type="file" id="aadhaar_doc" name="aadhaar_doc" style="display:block;">
+                        </label>
+                        <div class="file-name" id="file-name"></div>
+                        <div class="file-requirements">
+                            Accepted formats: PDF, JPEG, PNG<br>
+                            Maximum size: 5MB
+                        </div>
+                        <div class="progress-bar" id="progress-bar">
+                            <div class="progress" id="progress"></div>
+                        </div>
+                        <div class="error-text" id="file-error"></div>
+                    </div>
+
+                    <div class="input-grp">
+                        <input type="password" id="pass" name="pass" required>
+                        <label for="pass">Password:</label>
+                    </div>
+
+                    <div class="input-grp">
+                        <input type="password" id="cpass" name="cpass" required>
+                        <label for="cpass">Confirm Password:</label>
+                    </div>
+
+                    <button type="submit" name="submit" class="btn">Register</button>
+                    <p class="signup-text">Already have an account? <a href="login.html">Sign in</a></p>
+                </form>
+            </div>
+        </div>
+    </center>
+
+    <!-- Popup -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <p id="popupMessage"></p>
+            <a href="#" id="closePopup" class="close-btn">Close</a>
+        </div>
+    </div>
+
+    <script>
+        // File upload handling
+        document.getElementById('aadhaar_doc').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const fileNameDisplay = document.getElementById('file-name');
+            const fileError = document.getElementById('file-error');
+            const uploadText = document.getElementById('upload-text');
+
+            if (file) {
+
+                // Check file size
+                if (file.size > 5 * 1024 * 1024) {
+                    fileError.textContent = 'File size exceeds 5MB limit';
+                    fileError.style.display = 'block';
+                    this.value = ''; // Clear the file input
+                    fileNameDisplay.textContent = '';
+                    return;
+                }
+
+                // Check file type
+                const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+                if (!allowedTypes.includes(file.type)) {
+                    fileError.textContent = 'Invalid file type. Please upload PDF, JPEG, or PNG';
+                    fileError.style.display = 'block';
+                    this.value = '';
+                    fileNameDisplay.textContent = '';
+                    return;
+                }
+
+                fileError.style.display = 'none';
+                fileNameDisplay.textContent = file.name;
+                uploadText.textContent = 'Change file';
+            }
+        });
+
+        // Form submission
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            formData.append('submit', 'true');
+
+            // Show progress bar
+            const progressBar = document.getElementById('progress-bar');
+            const progress = document.getElementById('progress');
+            progressBar.style.display = 'block';
+
+            fetch('register.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showPopup(data.message);
+                    // Update progress bar to 100%
+                    progress.style.width = '100%';
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    showPopup(data.message);
+                    // Reset progress bar
+                    progress.style.width = '0%';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showPopup('An error occurred. Please try again.');
+                // Reset progress bar
+                progress.style.width = '0%';
+            });
+        });
+
+        function showPopup(message) {
+            document.getElementById('popupMessage').textContent = message;
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        document.getElementById('closePopup').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('popup').style.display = 'none';
+        });
+
+        function togglePassword(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+            } else {
+                passwordField.type = 'password';
+            }
+        }
+    </script>
+</body>
+</html>

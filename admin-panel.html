@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.cdnfonts.com/css/graphik-trial" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lighthousemedicals Admin</title>
+    <link rel="stylesheet" href="adminstyles.css">
+    <style>
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">🌿 Admin</div>
+        <div class="admin-info">
+            <span>Welcome, Admin</span>
+            <button class="logout-btn" onclick="handleLogout()">Logout</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <button class="toggle-btn">☰</button>
+            <nav>
+                <ul>
+                    <li><a href="#" >🏠 Dashboard</a></li>
+                    <li><a href="#user">👤 User Management</a></li>
+                    <li><a href="#medicine">📦 Product Management</a></li>
+                    <li><a href="#order">🛒 Order Management</a></li>
+                                   </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+
+            <div class="card-container">
+                <h1>Dashboard</h1><br>
+                <div class="card" id="totalUsersCard">📊 Total Users: Loading...</div>
+                <div class="card" id="totalProductsCard">📦 Total Products: Loading...</div>
+                
+
+            </div>
+
+            <section class="table-section">
+                <h2>User Management</h2>
+                <input type="text" placeholder="Search users..." class="search-bar">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Document Type</th>
+                            <th>Aadhaar Document</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- User data will be loaded here -->
+                    </tbody>
+                </table>
+                    </section>
+        <section class="table-section2" id="medicine">
+            <h2>Product Management</h2>
+            <input type="text" placeholder="Search products..." class="search-bar">
+            <button class="add-btn" onclick="showAddProductModal()">➕ Add Product</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Image</th>
+                        <th>Manufacture Date</th>
+                        <th>Expiry Date</th>
+                        <th>Stock</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="productTableBody">
+                    <!-- Products will be loaded here -->
+                </tbody>
+            </table>
+          
+        </section>
+        <section class="table-section3" id="order">
+            <h2>Order Management</h2>
+            <input type="text" placeholder="Search orders..." class="search-bar">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>User Name</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th>Order Date</th>
+                        <th>Total Amount</th>
+                        <th>Products</th>
+                        <th>Status</th>
+                        <th>Prescription</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="orderTableBody">
+                    <!-- Orders will be loaded here dynamically -->
+                </tbody>
+            </table>
+        </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Light House Medicals. All rights reserved.</p>
+    </footer>
+
+    <script src="your-script.js"></script>
+
+    <script>
+        // Sidebar Toggle
+        const toggleBtn = document.querySelector(".toggle-btn");
+        const sidebar = document.querySelector(".sidebar");
+        const content = document.querySelector(".content");
+
+        toggleBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("collapsed");
+
+            content.classList.toggle("expanded");
+        });
+
+        // Search Users in Table
+        const searchBar = document.querySelector(".search-bar");
+        const tableRows = document.querySelectorAll("tbody tr");
+
+        searchBar.addEventListener("input", (e) => {
+            const searchText = e.target.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                const name = row.cells[1].textContent.toLowerCase();
+                const email = row.cells[2].textContent.toLowerCase();
+
+                if (name.includes(searchText) || email.includes(searchText)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+        // Edit and Delete functionality
+       
+
+      
+              
+        // Function to fetch and update total users from database
+        async function updateTotalUsers() {
+            try {
+                const response = await fetch('/api/users/count');
+                const data = await response.json();
+                document.querySelector('.card:first-child').innerHTML = `📊 Total Users: ${data.totalUsers}`;
+            } catch (error) {
+                console.error('Error fetching user count:', error);
+                document.querySelector('.card:first-child').innerHTML = `📊 Total Users: Error`;
+            }
+        }
+
+        // Update count initially and after user changes
+        updateTotalUsers();
+        document.querySelectorAll('.delete-btn').forEach(btn =>
+            btn.addEventListener('click', () => setTimeout(updateTotalUsers, 100))
+        );
+
+        // Also update count when adding new users
+        document.querySelector('.add-btn').addEventListener('click', () =>
+            setTimeout(updateTotalUsers, 100)
+        );
+        // Dashboard navigation
+        document.querySelector('a[href="#"]').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector('.table-section').style.display = 'none';
+            document.querySelector('.card-container').style.display = 'block';
+            document.querySelector('.table-section2').style.display = 'none';
+            document.querySelector('.table-section3').style.display = 'none';
+        });
+
+        // User Management navigation 
+        document.querySelector('a[href="#user"]').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector('.table-section').style.display = 'block';
+            document.querySelector('.card-container').style.display = 'none';
+            document.querySelector('.table-section2').style.display = 'none';
+            document.querySelector('.table-section3').style.display = 'none';
+        });
+        document.querySelector('a[href="#medicine"]').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector('.table-section2').style.display = 'block';
+            document.querySelector('.table-section').style.display = 'none';
+            document.querySelector('.card-container').style.display = 'none';
+            document.querySelector('.table-section3').style.display = 'none';
+        });
+        document.querySelector('a[href="#order"]').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector('.table-section3').style.display = 'block';
+            document.querySelector('.table-section').style.display = 'none';
+            document.querySelector('.card-container').style.display = 'none';
+            document.querySelector('.table-section2').style.display = 'none';
+        });
+
+        // Function to filter medicines based on search input
+        document.querySelector('.table-section2 .search-bar').addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('.table-section2 tbody tr');
+            rows.forEach(row => {
+                const medicineName = row.querySelector('td:first-child').textContent.toLowerCase();
+                if (medicineName.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Function to filter orders based on search input
+        document.querySelector('.table-section3 .search-bar').addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('.table-section3 tbody tr');
+            rows.forEach(row => {
+                const orderDetails = Array.from(row.querySelectorAll('td')).map(td => td.textContent.toLowerCase()).join(' ');
+                if (orderDetails.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Replace the existing user management JavaScript with this code
+        document.addEventListener('DOMContentLoaded', function() {
+            // First, verify the elements exist
+            const userTable = document.querySelector('.table-section');
+            const searchBar = userTable.querySelector('.search-bar');
+            const tbody = userTable.querySelector('tbody');
+            const totalUsersCard = document.querySelector('.card:first-child');
+
+            if (!userTable || !searchBar || !tbody) {
+                console.error('Required elements not found');
+                return;
+            }
+
+            loadUsers();
+
+            async function loadUsers() {
+                try {
+                    const response = await fetch('users_api.php');
+                    const result = await response.json();
+
+                    if (result.status === 'error') {
+                        throw new Error(result.message);
+                    }
+
+                    const data = result.data;
+                    tbody.innerHTML = '';
+
+                    if (!Array.isArray(data) || data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="7">No users found</td></tr>';
+                        return;
+                    }
+
+                    data.forEach(user => {
+                        const row = document.createElement('tr');
+                        let documentDisplay = 'No document';
+                        
+                        if (user.aadhaar_doc && user.aadhaar_doc_type) {
+                            const docData = user.aadhaar_doc;
+                            const docType = user.aadhaar_doc_type;
+
+                            if (docType.startsWith('image/')) {
+                                documentDisplay = `
+                                    <div class="doc-preview">
+                                        <img src="data:${docType};base64,${docData}" 
+                                             alt="Aadhaar Document" 
+                                             style="max-width: 150px; max-height: 150px; cursor: pointer;"
+                                             onclick="window.open(this.src, '_blank')"
+                                        >
+                                        <div class="doc-actions">
+                                            <a href="data:${docType};base64,${docData}" 
+                                               download="aadhaar_document"
+                                               class="download-btn">
+                                                📥 Download
+                                            </a>
+                                        </div>
+                                    </div>`;
+                            } else {
+                                // Create a Blob URL for PDF
+                                const byteCharacters = atob(docData);
+                                const byteNumbers = new Array(byteCharacters.length);
+                                for (let i = 0; i < byteCharacters.length; i++) {
+                                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                                }
+                                const byteArray = new Uint8Array(byteNumbers);
+                                const blob = new Blob([byteArray], { type: docType });
+                                const blobUrl = URL.createObjectURL(blob);
+
+                                documentDisplay = `
+                                    <div class="doc-preview">
+                                        <div class="pdf-icon">📄</div>
+                                        <div class="doc-actions">
+                                            <a href="${blobUrl}" 
+                                               target="_blank" 
+                                               class="view-btn">
+                                                👁️ View
+                                            </a>
+                                            <a href="${blobUrl}" 
+                                               download="aadhaar_document"
+                                               class="download-btn">
+                                                📥 Download
+                                            </a>
+                                        </div>
+                                    </div>`;
+                            }
+                        }
+
+                        row.innerHTML = `
+                            <td>#${String(user.id).padStart(3, '0')}</td>
+                            <td>${user.name || ''}</td>
+                            <td>${user.email || ''}</td>
+                            <td>${user.phone || ''}</td>
+                            <td>${user.address || ''}</td>
+                            <td>${user.aadhaar_doc_type || 'Not specified'}</td>
+                            <td class="doc-cell">${documentDisplay}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+
+                } catch (error) {
+                    console.error('Error loading users:', error);
+                    tbody.innerHTML = `<tr><td colspan="7">Error: ${error.message}</td></tr>`;
+                }
+            }
+
+            // Add User function
+            async function addUser() {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <h2>Add New User</h2>
+                        <form id="addUserForm">
+                            <div class="form-group">
+                                <label for="name">Name:</label>
+                                <input type="text" id="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="email" id="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone:</label>
+                                <input type="tel" id="phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Address:</label>
+                                <textarea id="address" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="aadhaar">Aadhaar Document:</label>
+                                <input type="file" id="aadhaar" accept=".pdf,image/*" required>
+                            </div>
+                            <div class="button-group">
+                                <button type="submit" class="submit-btn">Add User</button>
+                                <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                // Add form submit handler
+                document.getElementById('addUserForm').onsubmit = async (e) => {
+                    e.preventDefault();
+                    
+                    const formData = new FormData();
+                    formData.append('name', document.getElementById('name').value);
+                    formData.append('email', document.getElementById('email').value);
+                    formData.append('phone', document.getElementById('phone').value);
+                    formData.append('address', document.getElementById('address').value);
+                    formData.append('aadhaar_doc', document.getElementById('aadhaar').files[0]);
+
+                    try {
+                        const response = await fetch('add_user.php', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        const result = await response.json();
+                        if (result.status === 'success') {
+                            alert('User added successfully!');
+                            closeModal();
+                            loadUsers(); // Reload the user list
+                        } else {
+                            throw new Error(result.message);
+                        }
+                    } catch (error) {
+                        alert('Error adding user: ' + error.message);
+                    }
+                };
+            }
+
+            function closeModal() {
+                const modal = document.querySelector('.modal');
+                if (modal) {
+                    modal.remove();
+                }
+            }
+
+            // Search functionality
+            searchBar.addEventListener('input', function(e) {
+                const searchText = e.target.value.toLowerCase();
+                const rows = tbody.querySelectorAll('tr');
+
+                rows.forEach(row => {
+                    if (row.cells.length >= 7) {  // Make sure row has enough cells
+                        const name = row.cells[1].textContent.toLowerCase();
+                        const email = row.cells[2].textContent.toLowerCase();
+
+                        if (name.includes(searchText) || email.includes(searchText)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+
+        // Add this new function for handling logout
+        function handleLogout() {
+            fetch('logout.php')
+                .then(() => {
+                    localStorage.clear(); // Clear localStorage
+                    window.location.href = 'login.html'; // Redirect to login page
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                });
+        }
+
+        // Replace the existing logout button onclick with the new function
+        document.querySelector('.logout-btn').onclick = handleLogout;
+
+        // Add these functions to your existing JavaScript
+        async function loadProducts() {
+            try {
+                const response = await fetch('products_api.php');
+                const result = await response.json();
+
+                if (result.status === 'error') {
+                    throw new Error(result.message);
+                }
+
+                const tbody = document.getElementById('productTableBody');
+                tbody.innerHTML = '';
+
+                result.data.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.id}</td>
+                        <td>${product.name}</td>
+                        <td>${product.description}</td>
+                        <td><img src="${product.image_url}" alt="${product.name}" style="max-width: 100px;"></td>
+                        <td>${product.manufacture_date}</td>
+                        <td>${product.expiry_date}</td>
+                        <td>${product.stock}</td>
+                        <td>₹${product.price}</td>
+                        <td>
+                            <button onclick="showEditProductModal(${JSON.stringify(product).replace(/"/g, '&quot;')})">✏️ Edit</button>
+                            <button onclick="deleteProduct(${product.id})">🗑️ Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading products:', error);
+                alert('Error loading products: ' + error.message);
+            }
+        }
+
+        function showAddProductModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2>Add New Product</h2>
+                    <form id="addProductForm">
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <textarea id="description" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="image_url">Image URL:</label>
+                            <input type="text" id="image_url" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="manufacture_date">Manufacture Date:</label>
+                            <input type="date" id="manufacture_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="expiry_date">Expiry Date:</label>
+                            <input type="date" id="expiry_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="stock">Stock:</label>
+                            <input type="number" id="stock" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price:</label>
+                            <input type="number" id="price" step="0.01" required>
+                        </div>
+                        <div class="button-group">
+                            <button type="submit">Add Product</button>
+                            <button type="button" onclick="closeModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById('addProductForm').onsubmit = async (e) => {
+                e.preventDefault();
+                await addProduct();
+            };
+        }
+
+        async function addProduct() {
+            try {
+                const productData = {
+                    name: document.getElementById('name').value,
+                    description: document.getElementById('description').value,
+                    image_url: document.getElementById('image_url').value,
+                    manufacture_date: document.getElementById('manufacture_date').value,
+                    expiry_date: document.getElementById('expiry_date').value,
+                    stock: document.getElementById('stock').value,
+                    price: document.getElementById('price').value
+                };
+
+                const response = await fetch('add_product.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(productData)
+                });
+
+                const result = await response.json();
+                if (result.status === 'success') {
+                    alert('Product added successfully!');
+                    closeModal();
+                    loadProducts();
+                    await updateDashboardStats();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                alert('Error adding product: ' + error.message);
+            }
+        }
+
+        function showEditProductModal(product) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2>Edit Product</h2>
+                    <form id="editProductForm">
+                        <input type="hidden" id="edit_id" value="${product.id}">
+                        <div class="form-group">
+                            <label for="edit_name">Name:</label>
+                            <input type="text" id="edit_name" value="${product.name}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_description">Description:</label>
+                            <textarea id="edit_description" required>${product.description}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_image_url">Image URL:</label>
+                            <input type="text" id="edit_image_url" value="${product.image_url}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_manufacture_date">Manufacture Date:</label>
+                            <input type="date" id="edit_manufacture_date" value="${product.manufacture_date}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_expiry_date">Expiry Date:</label>
+                            <input type="date" id="edit_expiry_date" value="${product.expiry_date}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_stock">Stock:</label>
+                            <input type="number" id="edit_stock" value="${product.stock}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_price">Price:</label>
+                            <input type="number" id="edit_price" step="0.01" value="${product.price}" required>
+                        </div>
+                        <div class="button-group">
+                            <button type="submit">Update Product</button>
+                            <button type="button" onclick="closeModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById('editProductForm').onsubmit = async (e) => {
+                e.preventDefault();
+                await updateProduct();
+            };
+        }
+
+        async function updateProduct() {
+            try {
+                const productData = {
+                    id: document.getElementById('edit_id').value,
+                    name: document.getElementById('edit_name').value,
+                    description: document.getElementById('edit_description').value,
+                    image_url: document.getElementById('edit_image_url').value,
+                    manufacture_date: document.getElementById('edit_manufacture_date').value,
+                    expiry_date: document.getElementById('edit_expiry_date').value,
+                    stock: document.getElementById('edit_stock').value,
+                    price: document.getElementById('edit_price').value
+                };
+
+                const response = await fetch('update_product.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(productData)
+                });
+
+                const result = await response.json();
+                if (result.status === 'success') {
+                    alert('Product updated successfully!');
+                    closeModal();
+                    loadProducts();
+                    await updateDashboardStats();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                alert('Error updating product: ' + error.message);
+            }
+        }
+
+        async function deleteProduct(id) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                try {
+                    const formData = new FormData();
+                    formData.append('id', id);
+
+                    const response = await fetch('delete_product.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    if (result.status === 'success') {
+                        alert('Product deleted successfully!');
+                        loadProducts();
+                        await updateDashboardStats();
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } catch (error) {
+                    alert('Error deleting product: ' + error.message);
+                }
+            }
+        }
+
+        function closeModal() {
+            const modal = document.querySelector('.modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Load products when the page loads
+        document.addEventListener('DOMContentLoaded', loadProducts);
+
+        // Add search functionality
+        document.querySelector('.search-bar').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#productTableBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Add this function to update dashboard stats
+        async function updateDashboardStats() {
+            try {
+                const response = await fetch('dashboard_stats.php');
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    document.getElementById('totalUsersCard').textContent = `📊 Total Users: ${result.data.totalUsers}`;
+                    document.getElementById('totalProductsCard').textContent = `📦 Total Products: ${result.data.totalProducts}`;
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('Error updating dashboard stats:', error);
+                document.getElementById('totalUsersCard').textContent = '📊 Total Users: Error loading';
+                document.getElementById('totalProductsCard').textContent = '📦 Total Products: Error loading';
+            }
+        }
+
+        // Call updateDashboardStats when the page loads
+        document.addEventListener('DOMContentLoaded', updateDashboardStats);
+
+        // Update dashboard stats after adding/deleting users or products
+        document.addEventListener('DOMContentLoaded', function() {
+            // Existing event listeners...
+
+            // Update stats after adding/deleting users
+            const addUserBtn = document.querySelector('.add-btn');
+            if (addUserBtn) {
+                addUserBtn.addEventListener('click', () => setTimeout(updateDashboardStats, 1000));
+            }
+
+            // Update stats after adding/deleting products
+            const addProductBtn = document.querySelector('[onclick="showAddProductModal()"]');
+            if (addProductBtn) {
+                addProductBtn.addEventListener('click', () => setTimeout(updateDashboardStats, 1000));
+            }
+        });
+
+        // Add these functions to your existing JavaScript
+        async function loadOrders() {
+            try {
+                const response = await fetch('get_orders.php');
+                const data = await response.json();
+                
+                const tbody = document.getElementById('orderTableBody');
+                tbody.innerHTML = '';
+                
+                data.forEach(order => {
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-order-id', order.id);
+                    
+                    // Format products
+                    const products = order.products || 'No products';
+                    
+                    row.innerHTML = `
+                        <td>${order.id}</td>
+                        <td>${order.user_name}</td>
+                        <td>${order.email}</td>
+                        <td>${order.delivery_address}</td>
+                        <td>${new Date(order.created_at).toLocaleString()}</td>
+                        <td>₹${order.total_amount}</td>
+                        <td>${products}</td>
+                        <td>
+                            <span class="status-badge ${order.status}">
+                                ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                            </span>
+                        </td>
+                        <td>
+                            ${order.prescription ? `
+                                <button onclick="viewPrescription('${order.prescription_type}', '${order.prescription}')">
+                                    View Prescription
+                                </button>
+                                <button onclick="downloadPrescription('${order.prescription_type}', '${order.prescription}')">
+                                    📥 Download
+                                </button>
+                            ` : 'No prescription'}
+                        </td>
+                        <td>
+                            ${order.status === 'pending' ? `
+                                <button class="approve-btn" onclick="approveOrder(${order.id})">✔️ Approve</button>
+                                <button class="cancel-btn" onclick="rejectOrder(${order.id})">❌ Reject</button>
+                            ` : ''}
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading orders:', error);
+            }
+        }
+        
+        
+        function approveOrder(orderId) {
+            if (confirm('Are you sure you want to approve this order?')) {
+                fetch('admin_approve_order.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'order_id=' + orderId
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.success) {
+                        location.reload(); // Refresh the page to show changes
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while approving the order.');
+                });
+            }
+        }
+
+        function rejectOrder(orderId) {
+            if (confirm('Are you sure you want to reject this order?')) {
+                fetch('admin_reject_order.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'order_id=' + orderId
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.success) {
+                        location.reload(); // Refresh the page to show changes
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while rejecting the order.');
+                });
+            }
+        }
+
+        function viewPrescription(type, base64Data) {
+            // Create a Blob URL for the image
+            const binaryString = atob(base64Data);
+            const byteArray = new Uint8Array(binaryString.length);
+
+            for (let i = 0; i < binaryString.length; i++) {
+                byteArray[i] = binaryString.charCodeAt(i);
+            }
+
+            const blob = new Blob([byteArray], { type: type });
+            const url = URL.createObjectURL(blob);
+
+            // Open the image in a new window or modal
+            const win = window.open();
+            win.document.write(`
+                <html>
+                    <head><title>Prescription Viewer</title></head>
+                    <body style="margin:0;padding:0;display:flex;justify-content:center;align-items:center;height:100vh;">
+                        <img src="${url}" style="max-width:100%;max-height:100vh;">
+                    </body>
+                </html>
+            `);
+            win.document.close();
+        }
+
+        function downloadPrescription(type, base64Data) {
+            // Decode the base64 data
+            const binaryString = atob(base64Data);
+            const byteArray = new Uint8Array(binaryString.length);
+            
+            for (let i = 0; i < binaryString.length; i++) {
+                byteArray[i] = binaryString.charCodeAt(i);
+            }
+            
+            // Create a Blob from the byte array
+            const blob = new Blob([byteArray], { type: type });
+            const url = URL.createObjectURL(blob);
+            
+            // Create and trigger download
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `prescription_${Date.now()}.${type.split('/')[1] || 'pdf'}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Clean up
+            URL.revokeObjectURL(url);
+        }
+
+        // Load orders when the page loads
+        document.addEventListener('DOMContentLoaded', loadOrders);
+    </script>
+
+    <!-- Add some CSS styles for document links -->
+    <style>
+        .doc-preview {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .doc-actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .view-btn, .download-btn {
+            padding: 5px 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .view-btn:hover, .download-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        .pdf-icon, .doc-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .doc-cell {
+            min-width: 200px;
+        }
+
+        img {
+            border: 1px solid #ddd;
+            padding: 3px;
+            background: white;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .button-group button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .button-group button[type="submit"] {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .button-group button[type="button"] {
+            background: #f44336;
+            color: white;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px;
+            max-width: 90%;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .submit-btn, .cancel-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .add-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .add-btn:hover {
+            background: #45a049;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            text-transform: capitalize;
+        }
+
+        .status-badge.pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        .status-badge.approved {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-badge.rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .approve-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</body>
+
+</html>
+``` 

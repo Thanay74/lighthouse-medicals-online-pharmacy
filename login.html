@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.cdnfonts.com/css/graphik-trial" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="css/login.css">
+    <title>LOGIN PAGE</title>
+    
+</head>
+<body>
+    <center>
+        <div class="login-container">
+            <h2>LOGIN</h2>
+            <div class="login_box">
+                <form id="login-form" action="login.php" method="POST">
+                    <div class="input-grp">
+                        <input type="email" id="email" name="email" required>
+                        <label for="email">Email:</label><br>
+                    </div>
+                    <div class="input-grp">
+                        <input type="password" id="password" name="password" required>
+                        <label for="password">Password:</label>
+                        <span class="toggle-password" onclick="togglePasswordVisibility()">
+                            <img id="eye-icon" src="https://cdn-icons-png.freepik.com/256/16516/16516008.png?ga=GA1.1.466540093.1743165789" alt="Show Password" />
+                        </span>
+                    </div>
+                    <button type="submit" class="btn">Login</button>
+                    <p class="signup-text">Don't have an account? <a href="register.html">Sign Up</a></p>
+                          </form>
+            </div>
+        </div>
+    </center>
+
+    <!-- Popup -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <p id="popupMessage"></p>
+            <button id="closePopup" class="close-btn">Close</button>
+        </div>
+    </div>
+
+    <script>
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.src="https://static-00.iconduck.com/assets.00/eye-password-hide-icon-2048x2048-c8pmhg0p.png"; // Change to closed eye icon
+            eyeIcon.alt = 'Hide Password';
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.src = 'https://cdn-icons-png.freepik.com/256/16516/16516008.png?ga=GA1.1.466540093.1743165789'; // Change to open eye icon
+            eyeIcon.alt = 'Show Password';
+        }
+    }
+
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        fetch('login.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            const popup = document.getElementById('popup');
+            const popupMessage = document.getElementById('popupMessage');
+            
+            if (data.status === 'success') {
+                // Store user data in localStorage
+                localStorage.setItem('user_id', data.user.id);
+                localStorage.setItem('email', data.user.email);
+                localStorage.setItem('is_admin', data.user.is_admin);
+                
+                // Show success message
+                popupMessage.textContent = `Login successful! Redirecting...`;
+                popup.style.display = 'block';
+                
+                // Redirect based on user type
+                window.location.href = data.redirect;
+            } else {
+                // Show error message
+                popupMessage.textContent = data.message;
+                popup.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const popup = document.getElementById('popup');
+            const popupMessage = document.getElementById('popupMessage');
+            popupMessage.textContent = 'An error occurred. Please try again.';
+            popup.style.display = 'block';
+        });
+    });
+
+    // Optional: Close popup on click
+    document.getElementById('closePopup').addEventListener('click', function() {
+        document.getElementById('popup').style.display = 'none';
+    });
+
+    // Check if user is already logged in
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('check_session.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.loggedIn) {
+                    // Redirect based on admin status after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = data.isAdmin ? 'admin-panel.html' : 'index.html';
+                    }, 7000);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+    </script>
+</body>
+</html>

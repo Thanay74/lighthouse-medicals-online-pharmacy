@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.cdnfonts.com/css/graphik-trial" rel="stylesheet">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIGHT HOUSE MEDICALS-HOME PAGE</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="search.js" defer></script>
+    <script src="shopping.js" defer></script>
+</head>
+
+<body>
+    <!--header section-->
+    <header class="hed" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+    transform-style: preserve-3d;">
+        <div class="header_panel_wrap">
+            <div  onclick="location.href='index.html'">
+                <img class="logo"
+                    src="LIGHT HOUSE MEDICALS.png">
+               
+            </div>
+            <!-- Mobile Navigation Menu -->
+            <div class="menu-icon" onclick="toggleMobileMenu()">☰</div>
+            <div class="mobile-nav">
+                <span class="close-menu" onclick="toggleMobileMenu()">✕</span>
+                <a href="#">Home</a>
+                <a href="#">Products</a>
+                <a href="#">Categories</a>
+                <a href="#">Cart</a>
+                <a href="#">Login</a>
+                <a href="#">Register</a>
+            </div>
+           
+            <script>
+            function toggleMobileMenu() {
+                const mobileNav = document.querySelector('.mobile-nav');
+                mobileNav.classList.toggle('active');
+            }
+            </script>
+           <div class="search_wrap">
+            <div class="search-container">
+                <input type="text" id="search" placeholder="Search...." class="search_bar">
+                <button class="search_button">SEARCH</button>
+            </div>
+        </div>
+            <nav class="nav_buttons" id="auth-buttons">
+              <!--  <button class="cart" onclick="location.href='#cart'">
+                    <img style="display:flex; position:relative; left:30%; bottom:30%;  width:30px; height:27px;"
+                        src="https://cdn4.iconfinder.com/data/icons/e-commerce-shopping/100/shopping_bag-512.png">
+                </button>
+            -->
+                    <!-- These buttons will be shown/hidden based on login status -->
+                    <button class="about_us" onclick="location.href='about.html'">About Us</button>
+                    <button class="profile" id="profileBtn" style="display: none;">Profile</button>
+                    <button class="d1" onclick="location.href='login.html'" id="loginBtn">Login</button>
+                    <button class="d2" onclick="location.href='register.html'" id="registerBtn">Register</button>
+                    <button class="d2" onclick="logout()" id="logoutBtn" style="display: none;">Logout</button>
+                
+            </nav>
+        </div>
+
+
+    </header>
+    <div id="cart" class="cart-popup">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+            <a href="#" class="close-cart">&times;</a>
+        </div>
+
+        <div id="cart-content">
+            <!-- Empty cart message (shown by default) -->
+            <div id="empty-cart" style="text-align: center; padding: 40px 20px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" 
+                     alt="Empty Cart" 
+                     style="width: 100px; height: 100px; margin-bottom: 20px;">
+                <p style="color: #666; font-family: 'Graphik Trial', sans-serif; font-size: 16px;">
+                    Your cart is empty
+                </p>
+                <a href="#" 
+                   style="display: inline-block; margin-top: 20px; padding: 10px 20px; 
+                          background-color: #1F6366; color: white; text-decoration: none; 
+                          border-radius: 5px; font-family: 'Graphik Trial', sans-serif;">
+                    Start Shopping
+                </a>
+            </div>
+
+            <!-- Cart items (hidden by default) -->
+            <div id="cart-items" style="display: none;">
+                <!-- Cart items will be dynamically added here -->
+            </div>
+        </div>
+
+        <div id="cart-footer" class="cart-footer" style="display: none;">
+            <div class="subtotal">
+                <span>Subtotal</span>
+                <span id="cart-subtotal">Rs 0.00</span>
+            </div>
+            <a href="#" class="checkout-button">Continue to checkout</a>
+        </div>
+    </div>
+    <div class="search-results" style="display: none;">
+        <div class="container">
+            <h2 class="search-title">Search Results</h2>
+            <div class="search-results-grid">
+                <!-- Results will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <div class="whole_product_div">
+        <!--hero section-->
+        <section class="hero_page" id="hero-section" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+    transform-style: preserve-3d;">
+
+            <div class="hero_page_div">
+                <div class="nurse"><img style="width: 100%;
+            height: 100%;"
+                        src="https://cdn.prod.website-files.com/63f596334718ae9963ed6e60/63fd8add913cf53264cf8fb1_Doctor%20Banner.png">
+                </div>
+                <div class="health">Healthcare</div>
+            </div>
+
+        </section>
+
+        <div id="main-content">
+            <!--product section-->
+            <section class="product_section">
+                <div class="product_container">
+                    <div class="product_container_title">
+                        <H1>Essentials</H1>
+                    </div>
+                    <!--product container grid-->
+                    <div class="product_container_grid">
+                        <div class="product_div">
+                            <div class="product_thumbnail_div">
+                                <img style="width:80%;height:100%;"
+                                    src="https://cdn.prod.website-files.com/63f596334718ae9963ed6e60/63fc4d48ad0fbff1a863d90d_PRODUCT%20IMAGE.png">
+                            </div>
+                            <div class="product_thumbnail_details_1">
+                                <div>
+                                    <h4>Nutrition</h4>
+                                </div>
+                                <div>
+                                    <h4>Dietary Supplement
+                                        Health Products</h4>
+                                </div>
+                                <div>
+                                    <h1>₹90.50</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product_div" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+   transform-style: preserve-3d;">
+                            <div class="product_thumbnail_div">
+                                <img style="width: 80%;
+                height: 100%;" src="https://cdn.prod.website-files.com/63f596334718ae9963ed6e60/63fc4d48ad0fbff1a863d90d_PRODUCT%20IMAGE.png">
+                            </div>
+                            <div class="product_thumbnail_details_1">
+                                <div>
+                                    <h4>Nutrition</h4>
+                                </div>
+                                <div>
+                                    <h4>Dietary Supplement
+                                        Health Products</h4>
+                                </div>
+                                <div>
+                                    <h1>₹90.50</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product_div" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+                    transform-style: preserve-3d;">
+                            <div class="product_thumbnail_div">
+                                <img style="width: 80%;
+                height: 100%;" src="https://cdn.prod.website-files.com/63f596334718ae9963ed6e60/63fc4d48ad0fbff1a863d90d_PRODUCT%20IMAGE.png">
+                            </div>
+                            <div class="product_thumbnail_details_1">
+                                <div>
+                                    <h4>Nutrition</h4>
+                                </div>
+                                <div>
+                                    <h4>Dietary Supplement
+                                        Health Products</h4>
+                                </div>
+                                <div>
+                                    <h1>₹90.50</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product_div" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+   transform-style: preserve-3d;">
+                            <div class="product_thumbnail_div">
+                                <img style="width: 80%;
+                height: 100%;" src="https://cdn.prod.website-files.com/63f596334718ae9963ed6e60/63fc4d48ad0fbff1a863d90d_PRODUCT%20IMAGE.png">
+                            </div>
+                            <div class="product_thumbnail_details_1">
+                                <div>
+                                    <h4>Nutrition</h4>
+                                </div>
+                                <div>
+                                    <h4>Dietary Supplement
+                                        Health Products</h4>
+                                </div>
+                                <div>
+                                    <h1>₹90.50</h1>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+            <!--product section-->
+            <section class="product_section_2">
+                <div class="product_container_2">
+                    <div class="product_container_title">
+                        <H1>Medical essentials for you</H1>
+                    </div>
+                    <!--product container grid-->
+                    <div class="product_container_grid1">
+                        <div class="product_div">
+                            <div class="product_thumbnail_div">
+                                <img style="width:80%;height:100%;"
+                                    src="https://cdn.prod.website-files.com/63f596334718ae9963ed6e60/63fc4d48ad0fbff1a863d90d_PRODUCT%20IMAGE.png">
+                            </div>
+                            <div class="product_thumbnail_details_1">
+                                <h4>Nutrition</h4>
+                                <h4>Dietary Supplement
+                                    Health Products</h4>
+                                <h1>₹90.50</h1>
+                            </div>
+                        </div>
+                        <div class="product_div" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+transform-style: preserve-3d;">
+                            <div class="product_thumbnail_div">
+                                <img style="width: 80%;
+            height: 100%;" src="https://cdn.prod.website-files.com/63f596334718ae9963ed6e60/63fc4d48ad0fbff1a863d90d_PRODUCT%20IMAGE.png">
+                            </div>
+                            <div class="product_thumbnail_details_1">
+                                <div>
+                                    <h4>Nutrition</h4>
+                                </div>
+                                <div>
+                                    <h4>Dietary Supplement
+                                        Health Products</h4>
+                                </div>
+                                <div>
+                                    <h1>₹90.50</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product_div" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+                transform-style: preserve-3d;">
+                            <div class="product_thumbnail_div">
+                                <img style="width: 80%;
+            height: 100%;" src="https://cdn.prod.website-files.com/63f596334718ae9963ed6e60/63fc4d48ad0fbff1a863d90d_PRODUCT%20IMAGE.png">
+                            </div>
+                            <div class="product_thumbnail_details_1">
+                                <div>
+                                    <h4>Nutrition</h4>
+                                </div>
+                                <div>
+                                    <h4>Dietary Supplement
+                                        Health Products</h4>
+                                </div>
+                                <div>
+                                    <h1>₹90.50</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product_div" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+transform-style: preserve-3d;">
+                            <div class="product_thumbnail_div">
+                                <img style="width: 80%;
+            height: 100%;" src="https://cdn.prod.website-files.com/63f596334718ae9963ed6e60/63fc4d48ad0fbff1a863d90d_PRODUCT%20IMAGE.png">
+                            </div>
+                            <div class="product_thumbnail_details_1">
+                                <div>
+                                    <h4>Nutrition</h4>
+                                </div>
+                                <div>
+                                    <h4>Dietary Supplement
+                                        Health Products</h4>
+                                </div>
+                                <div>
+                                    <h1>₹90.50</h1>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+           
+
+        </div>
+
+    </div>
+
+    <footer class="footer" style="color: #ffff; padding: 20px; text-align: center; ">
+        <div style=" font-size:30px; max-width: 1200px; margin: 0 auto;">
+            <!-- Company Info -->
+            <div style="margin-bottom: 20px;">
+                 <a href="index.html" class="footer_logo"><img src="LIGHT HOUSE MEDICALS.png" alt=""></a>
+                  
+                <p style="margin: 5px 0; font-size: 14px; color: #bb96ff; ">Your trusted online pharmacy and healthcare
+                    partner</p>
+            </div>
+
+           
+
+            <!-- Social Media Links -->
+            <div style="margin-bottom: 20px;">
+               <P style="font-size: medium;"> L.H. Condominium, Light House Hill Rd, opp. City Central Library, Bavutagudde, Mangaluru, Karnataka 575001</P>
+            <!-- Copyright -->
+            
+                <p style="font-size: 12px; color: #999; margin: 0;">&copy; 2025 LIGHT HOUSE MEDICALS. All rights reserved.
+                </p>
+               
+            </div>
+        </div>
+    </footer>
+
+    <div id="profile-popup" class="profile-popup" style="display: none;">
+        <div class="profile-header">
+            <h2>User Profile</h2>
+            <a href="#" class="close-profile"></a>
+        </div>
+        <div class="profile-content">
+            </div>
+            <div class="profile-details">
+                <p><strong>Name:</strong> <span id="profile-name"></span></p>
+                <p><strong>Email:</strong> <span id="profile-email"></span></p>
+                <p><strong>Phone:</strong> <span id="profile-phone"></span></p>
+                <p><strong>Address:</strong> <span id="profile-address"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchButton = document.querySelector('.search_button');
+        const searchInput = document.querySelector('.search_bar');
+        const mainContent = document.getElementById('main-content');
+        const heroSection = document.getElementById('hero-section');
+        const searchResults = document.querySelector('.search-results');
+
+        searchButton.addEventListener('click', function() {
+            const query = searchInput.value.trim();
+            if (query) {
+                // Hide main content and hero section
+                mainContent.style.display = 'none';
+                heroSection.style.display = 'none';
+                
+                // Show search results
+                searchResults.style.display = 'block';
+                
+                // Your existing search functionality here
+                // ...
+            } else {
+                // Show main content and hero section
+                mainContent.style.display = 'block';
+                heroSection.style.display = 'block';
+                
+                // Hide search results
+                searchResults.style.display = 'none';
+            }
+        });
+    });
+    </script>
+
+    <script>
+    // Add this to your existing JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if user is logged in and has items in cart
+        function checkCartStatus() {
+            fetch('check_cart.php')
+                .then(response => response.json())
+                .then(data => {
+                    const emptyCart = document.getElementById('empty-cart');
+                    const cartItems = document.getElementById('cart-items');
+                    const cartFooter = document.getElementById('cart-footer');
+
+                    if (data.hasItems) {
+                        // Show cart items and footer
+                        emptyCart.style.display = 'none';
+                        cartItems.style.display = 'block';
+                        cartFooter.style.display = 'block';
+                        
+                        // Populate cart items
+                        cartItems.innerHTML = data.items.map(item => `
+                            <div class="cart-item">
+                                <img src="${item.image}" alt="${item.name}">
+                                <div class="item-details">
+                                    <h3 class="item-title">${item.name}</h3>
+                                    <p class="item-price">Rs ${item.price}</p>
+                                    <a href="#" class="remove-link" data-id="${item.id}">Remove</a>
+                                </div>
+                                <input type="number" value="${item.quantity}" min="1" class="quantity-input" data-id="${item.id}">
+                            </div>
+                        `).join('');
+                        
+                        // Update subtotal
+                        document.getElementById('cart-subtotal').textContent = `Rs ${data.subtotal}`;
+                    } else {
+                        // Show empty cart message
+                        emptyCart.style.display = 'block';
+                        cartItems.style.display = 'none';
+                        cartFooter.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking cart status:', error);
+                });
+        }
+
+        // Check cart status when cart is opened
+        document.querySelector('.cart').addEventListener('click', checkCartStatus);
+    });
+    </script>
+
+    <script>
+    // Function to update auth buttons visibility
+    function updateAuthButtons(isLoggedIn) {
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const profileBtn = document.getElementById('profileBtn');
+        
+        if (isLoggedIn) {
+            loginBtn.style.display = 'none';
+            registerBtn.style.display = 'none';
+            logoutBtn.style.display = 'inline-block';
+            profileBtn.style.display = 'inline-block';
+        } else {
+            loginBtn.style.display = 'inline-block';
+            registerBtn.style.display = 'inline-block';
+            logoutBtn.style.display = 'none';
+            profileBtn.style.display = 'none';
+        }
+    }
+
+    // Logout function
+    function logout() {
+        fetch('logout.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Clear local storage
+                    localStorage.removeItem('user_id');
+                    localStorage.removeItem('email');
+                    
+                    // Update UI
+                    updateAuthButtons(false);
+                    
+                    // Remove user ID display if it exists
+                    const userIdDisplay = document.querySelector('.user-id-display');
+                    if (userIdDisplay) {
+                        userIdDisplay.remove();
+                    }
+                    
+                    // Redirect to login page
+                    window.location.href = 'login.html';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Check login status when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('check_session.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.loggedIn) {
+                    // User is logged in
+                    updateAuthButtons(true);
+                    
+                    // Display user ID
+                    const userIdDisplay = document.createElement('div');
+                    userIdDisplay.className = 'user-id-display';
+                    userIdDisplay.style.color = 'white';
+                    userIdDisplay.style.marginLeft = '10px';
+                    userIdDisplay.textContent = `User ID: ${data.userId}`;
+                    
+                    // Add to header
+                    document.querySelector('.nav_buttons').prepend(userIdDisplay);
+                } else {
+                    updateAuthButtons(false);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fetch products from database
+        fetch('get_products.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const productContainer = document.querySelector('.product_container_grid');
+                    productContainer.innerHTML = ''; // Clear existing content
+
+                    data.products.forEach(product => {
+                        const productDiv = document.createElement('div');
+                        productDiv.className = 'product_div';
+                        productDiv.style.cursor = 'pointer';
+                        
+                        // Add click event to navigate to shopping.html
+                        productDiv.addEventListener('click', () => {
+                            const params = new URLSearchParams({
+                                name: product.name,
+                                description: product.description,
+                                price: product.price,
+                                image: product.image_url,
+                                manufacture_date: product.manufacture_date,
+                                expiry_date: product.expiry_date
+                            });
+                            window.location.href = `shopping.html?${params.toString()}`;
+                        });
+
+                        productDiv.innerHTML = `
+                            <div class="product_thumbnail_div">
+                                <img src="${product.image_url}" 
+                                     alt="${product.name}" 
+                                     onerror="this.src='images/placeholder.jpg'">
+                            </div>
+                            <div class="product_thumbnail_details_1">
+                                <h4>${product.name}</h4>
+                                <p>${product.description.substring(0, 50)}...</p>
+                                <h3>₹${parseFloat(product.price).toFixed(2)}</h3>
+                            </div>
+                        `;
+                        productContainer.appendChild(productDiv);
+                    });
+                } else {
+                    console.error('Failed to fetch products:', data.message);
+                }
+            })
+            .catch(error => console.error('Error fetching products:', error));
+    });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch products from database
+            fetch('get_products_1.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const productContainer = document.querySelector('.product_container_grid1');
+                        productContainer.innerHTML = ''; // Clear existing content
+    
+                        data.products.forEach(product => {
+                            const productDiv = document.createElement('div');
+                            productDiv.className = 'product_div';
+                            productDiv.style.cursor = 'pointer';
+                            
+                            // Add click event to navigate to shopping.html
+                            productDiv.addEventListener('click', () => {
+                                const params = new URLSearchParams({
+                                    name: product.name,
+                                    description: product.description,
+                                    price: product.price,
+                                    image: product.image_url,
+                                });
+                                window.location.href = `shopping.html?${params.toString()}`;
+                            });
+    
+                            productDiv.innerHTML = `
+                                <div class="product_thumbnail_div">
+                                    <img src="${product.image_url}" 
+                                         alt="${product.name}" 
+                                         onerror="this.src='images/placeholder.jpg'">
+                                </div>
+                                <div class="product_thumbnail_details_1">
+                                    <h4>${product.name}</h4>
+                                    <p>${product.description.substring(0, 50)}...</p>
+                                    <h3>₹${parseFloat(product.price).toFixed(2)}</h3>
+                                </div>
+                            `;
+                            productContainer.appendChild(productDiv);
+                        });
+                    } else {
+                        console.error('Failed to fetch products:', data.message);
+                    }
+                })
+                .catch(error => console.error('Error fetching products:', error));
+        });
+        </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileBtn = document.getElementById('profileBtn');
+        const profilePopup = document.getElementById('profile-popup');
+
+        if (profileBtn) {
+            profileBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Calculate position
+                const rect = profileBtn.getBoundingClientRect();
+                const popupTop = rect.bottom + window.scrollY;
+                
+                // Set popup position
+                profilePopup.style.setProperty('--profile-popup-top', `${popupTop}px`);
+                
+                // Toggle popup visibility
+                if (profilePopup.style.display === 'block') {
+                    profilePopup.style.display = 'none';
+                } else {
+                    profilePopup.style.display = 'block';
+                    
+                    // Fetch profile data
+                    fetch('get_profile.php')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.text(); // First get as text
+                        })
+                        .then(text => {
+                            try {
+                                const data = JSON.parse(text);
+                                console.log('Profile data:', data);
+                                if (data.success) {
+                                    document.getElementById('profile-name').textContent = data.name;
+                                    document.getElementById('profile-email').textContent = data.email;
+                                    document.getElementById('profile-phone').textContent = data.phone;
+                                    document.getElementById('profile-address').textContent = data.address;
+                                } else {
+                                    console.error('Failed to fetch profile:', data.message);
+                                }
+                            } catch (e) {
+                                console.error('Invalid JSON:', text);
+                                throw new Error('Invalid JSON response');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Fetch error:', error);
+                            alert('Error fetching profile data. Please check console for details.');
+                        });
+                }
+            });
+        }
+
+        // Close popup when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!profilePopup.contains(e.target) && e.target !== profileBtn) {
+                profilePopup.style.display = 'none';
+            }
+        });
+    });
+    </script>
+
+</body>
+
+</html>

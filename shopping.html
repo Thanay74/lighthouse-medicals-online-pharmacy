@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.cdnfonts.com/css/graphik-trial" rel="stylesheet">
+    <script src="shopping.js"></script>
+  
+
+   
+<link rel="stylesheet" href="css/shopping.css">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Details </title>
+</head>
+
+<body>
+    <script>
+    // Check session before loading page content
+    fetch('check_session.php')
+        .then(response => response.json())
+        .then(data => {
+            if (!data.loggedIn) {
+                window.location.href = 'login.html';
+            }
+        })
+        .catch(error => {
+            console.error('Session check error:', error);
+            window.location.href = 'login.html';
+        });
+    </script>
+    <header class="hed" style="transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+    transform-style: preserve-3d;">
+        <div class="header_panel_wrap">
+            <div  onclick="location.href='index.html'">
+                <img class="logo"
+                    src="LIGHT HOUSE MEDICALS.png">
+               
+            </div>
+
+            
+
+            <nav class="nav_buttons">
+                
+                <button class="cart" onclick="toggleCart()">
+                    <img style="display:flex; position:relative; left:30%; bottom:10%; width:30px; height:27px;"
+                    src="https://cdn1.iconfinder.com/data/icons/material-core/20/shopping-cart-256.png">
+              <span id="cart-count">0</span>
+                </button>
+
+               
+            </nav>
+        </div>
+
+
+    </header>
+            
+            </div>
+        </section>
+    </div>
+    <div id="search-results" class="search-results"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchQuery = urlParams.get('search');
+
+            if (searchQuery) {
+                // Hide all product sections and medicine container
+                document.querySelector('.product_section').style.display = 'none';
+                document.querySelector('.medicine-container').style.display = 'none';
+                document.querySelector('.back-button').style.display = 'none';
+
+                // Show the search results section
+                const searchResultsSection = document.querySelector('.search-results');
+                searchResultsSection.style.display = 'block';
+
+                // Fetch and display search results
+                fetch(`fetch_products.php?q=${encodeURIComponent(searchQuery)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        displaySearchResults(data);
+                    })
+                    .catch(error => console.error('Error:', error));
+            } else {
+                // Hide search results section when not searching
+                document.querySelector('.search-results').style.display = 'none';
+            }
+
+            function displaySearchResults(products) {
+                const productContainer = document.querySelector('.product_container_grid');
+                productContainer.innerHTML = ''; // Clear existing products
+
+                if (products.length === 0) {
+                    productContainer.innerHTML = '<p>No results found.</p>';
+                } else {
+                    products.forEach(product => {
+                        const productDiv = document.createElement('div');
+                        productDiv.className = 'product_div';
+                        productDiv.innerHTML = `
+                            <div class="product_thumbnail_div">
+                                <img src="${product.image_url}" alt="${product.name}">
+                            </div>
+                            <div class="product_thumbnail_details_1">
+                                <h4>${product.name}</h4>
+                                <p>${product.description.substring(0, 50)}...</p>
+                                <h3>₹${parseFloat(product.price).toFixed(2)}</h3>
+                            </div>
+                        `;
+                        productDiv.addEventListener('click', () => {
+                            window.location.href = `shopping.html?name=${encodeURIComponent(product.name)}&description=${encodeURIComponent(product.description)}&price=${encodeURIComponent(product.price)}&image=${encodeURIComponent(product.image_url)}`;
+                        });
+                        productContainer.appendChild(productDiv);
+                    });
+                }
+            }
+        });
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        if (productId) {
+            fetch(`get_product_details.php?id=${productId}`)
+                .then(response => response.json())
+                .then(product => {
+                    if (product.error) {
+                        console.error(product.error);
+                        return;
+                    }
+
+                    // Format dates to be more readable
+                    const formatDate = (dateString) => {
+                        const date = new Date(dateString);
+                        return date.toLocaleDateString('en-IN', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric'
+                        });
+                    };
+
+                    // Update product details including dates
+                    document.getElementById('medicine-name').textContent = product.name;
+                    document.getElementById('medicine-description').textContent = product.description;
+                    document.getElementById('medicine-price').textContent = `₹${product.price}`;
+                    document.getElementById('manufacture-date').textContent = formatDate(product.manufacture_date);
+                    document.getElementById('expiry-date').textContent = formatDate(product.expiry_date);
+                    
+                    // Update main image
+                    const mainImage = document.querySelector('.display');
+                    mainImage.style.backgroundImage = `url('${product.image_url}')`;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    });
+    </script>
+    <a href="index.html" class="back-button">← Back to Search</a>
+    
+    <div class="medicine-container">
+        
+        
+        <div class="main-image-section">
+            <img id="main-image" class="main-image" src="" alt="Medicine Image">
+        </div>
+        
+        <div class="medicine-info">
+            <h1 id="medicine-name" class="medicine-name"></h1>
+            <p id="medicine-description" class="medicine-description"></p>
+            <div class="medicine-dates">
+              <p class="date-info">
+                   
+                    <span id="manufacture-date" class="date-value"></span>
+                </p>
+                <p class="date-info">
+                    
+                    <span id="expiry-date" class="date-value"></span>
+                </p>
+            </div>
+            <div id="medicine-price" class="medicine-price"></div>
+            <button class="add-to-cart-button">Add to Cart</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const name = decodeURIComponent(urlParams.get('name') || '');
+            const description = decodeURIComponent(urlParams.get('description') || '');
+            const price = decodeURIComponent(urlParams.get('price') || '');
+            const image = decodeURIComponent(urlParams.get('image') || '');
+          
+            // Format dates for display
+            const formatDate = (dateString) => {
+                if (dateString === 'Not Available') return dateString;
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            };
+
+            // Update the DOM with medicine details
+            document.getElementById('medicine-name').textContent = name;
+            document.getElementById('medicine-description').textContent = description;
+            document.getElementById('medicine-price').textContent = `₹${price}`;
+           
+            // Update main image
+            const mainImage = document.getElementById('main-image');
+            mainImage.src = image;
+            mainImage.onerror = function() {
+                this.src = 'images/placeholder.jpg';
+            };
+
+            // Update thumbnails
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach(thumbnail => {
+                thumbnail.src = image;
+                thumbnail.onerror = function() {
+                    this.src = 'images/placeholder.jpg';
+                };
+            });
+
+            // Add to cart functionality
+            const addToCartButton = document.querySelector('.add-to-cart-button');
+            addToCartButton.addEventListener('click', function() {
+                const existingItem = cart.find(item => item.name === name);
+                
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        name: name,
+                        price: price,
+                        image: image,
+                        quantity: 1
+                    });
+                }
+                
+                updateCartDisplay();
+                toggleCart(); // Show cart after adding item
+            });
+        });
+    </script>
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        updateCartDisplay();
+
+        function updateCartDisplay() {
+            const cartItems = document.getElementById('cart-items');
+            const cartCount = document.getElementById('cart-count');
+            const cartTotal = document.getElementById('cart-total');
+            
+            // Update cart count
+            cartCount.textContent = cart.length;
+            
+            // Update cart items
+            if (!cartItems) return; // Exit if element doesn't exist
+            cartItems.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                total += parseFloat(item.price) * item.quantity;
+                cartItems.innerHTML += `
+                    <div class="cart-item">
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="cart-item-details">
+                            <h4>${item.name}</h4>
+                            <p>₹${item.price}</p>
+                            <div class="quantity-controls">
+                                <button onclick="updateQuantity(${index}, -1)">-</button>
+                                <span>${item.quantity}</span>
+                                <button onclick="updateQuantity(${index}, 1)">+</button>
+                                <button onclick="removeFromCart(${index})">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cartTotal.textContent = total.toFixed(2);
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        function toggleCart() {
+            const cartPopup = document.getElementById('cart-popup');
+            cartPopup.classList.toggle('active');
+        }
+
+        function updateQuantity(index, change) {
+            cart[index].quantity += change;
+            if (cart[index].quantity < 1) {
+                cart.splice(index, 1);
+            }
+            updateCartDisplay();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartDisplay();
+        }
+    </script>
+    <div id="cart-popup" class="cart-popup">
+        <div class="cart-header">
+            <h3>Shopping Cart</h3>
+            <span class="close-cart" onclick="toggleCart()">×</span>
+        </div>
+        <div id="cart-items" class="cart-items">
+            <!-- Cart items will be added here -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                Total: ₹<span id="cart-total">0.00</span>
+            </div>
+            <button class="checkout-button" onclick="proceedToCheckout()">Proceed to Checkout</button>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to handle search and display results
+        async function searchProducts(event) {
+            event.preventDefault();
+            const searchTerm = document.getElementById('search-input').value.trim();
+            
+            try {
+                const response = await fetch('search.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ searchTerm })
+                });
+
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const resultsContainer = document.getElementById('search-results');
+                    resultsContainer.innerHTML = '';
+
+                    data.results.forEach(product => {
+                        const productCard = `
+                            <div class="product-card">
+                                <img src="${product.image}" alt="${product.name}">
+                                <h3>${product.name}</h3>
+                                <p>${product.description}</p>
+                                <p class="price">₹${product.price}</p>
+                                <p class="dates">
+                                    <span class="manufacture-date">Manufacture: ${product.manufacture_date}</span><br>
+                                    <span class="expiry-date">Expiry: ${product.expiry_date}</span>
+                                </p>
+                                <button onclick="viewProduct('${product.name}', '${product.description}', 
+                                    '${product.price}', '${product.image}', '${product.manufacture_date}', 
+                                    '${product.expiry_date}')" class="view-button">
+                                    View Details
+                                </button>
+                            </div>
+                        `;
+                        resultsContainer.innerHTML += productCard;
+                    });
+                } else {
+                    console.error('Search failed:', data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Function to view product details
+        window.viewProduct = function(name, description, price, image, manufactureDate, expiryDate) {
+            const params = new URLSearchParams({
+                name: name,
+                description: description,
+                price: price,
+                image: image,
+               
+            });
+            window.location.href = `shopping.html?${params.toString()}`;
+        };
+
+        // Load product details if viewing a specific product
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('name')) {
+            const name = decodeURIComponent(urlParams.get('name'));
+            const description = decodeURIComponent(urlParams.get('description'));
+            const price = decodeURIComponent(urlParams.get('price'));
+            const image = decodeURIComponent(urlParams.get('image'));
+           
+            // Update the product details in the DOM
+            document.getElementById('medicine-name').textContent = name;
+            document.getElementById('medicine-description').textContent = description;
+            document.getElementById('medicine-price').textContent = `₹${price}`;
+           const mainImage = document.getElementById('main-image');
+            if (mainImage) {
+                mainImage.src = image;
+                mainImage.alt = name;
+            }
+        }
+
+        // Add event listener for search form
+        const searchForm = document.querySelector('.search-form');
+        if (searchForm) {
+            searchForm.addEventListener('submit', searchProducts);
+        }
+    });
+    </script>
+    <script>
+    async function proceedToCheckout() {
+        const checkoutButton = document.querySelector('.checkout-button');
+        try {
+            // Disable the button to prevent multiple clicks
+            checkoutButton.disabled = true;
+            checkoutButton.textContent = 'Processing...';
+
+            // Generate a unique identifier
+            const cartIdentifier = 'cart_' + Date.now();
+
+            // Get cart data from localStorage
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            if (cartItems.length === 0) {
+                alert('Your cart is empty!');
+                checkoutButton.disabled = false;
+                checkoutButton.textContent = 'Proceed to Checkout';
+                return;
+            }
+
+            // Send cart data to PHP
+            const response = await fetch('save_cart.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    items: cartItems,
+                    total: document.getElementById('cart-total').textContent,
+                    cartIdentifier: cartIdentifier
+                })
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                // Clear local storage cart
+                localStorage.removeItem('cart');
+                // Redirect to checkout page
+                window.location.href = 'checkout.php';
+            }
+        } catch (error) {
+            console.error('Checkout error:', error);
+            // Show the error popup only if there's an actual error
+            } finally {
+            // Re-enable the button in case of error
+            checkoutButton.disabled = false;
+            checkoutButton.textContent = 'Proceed to Checkout';
+        }
+    }
+    </script>
+       <footer class="footer" style="color: #ffff; padding: 20px; text-align: center; ">
+        <div style=" font-size:30px; max-width: 1200px; margin: 0 auto;">
+            <!-- Company Info -->
+            <div style="margin-bottom: 20px; ">
+               <div > <h4 style="margin: 0; font-weight:900; color:#042c96; background-color:white; ">LIGHT HOUSE MEDICALS</h4>
+               </div>
+                 <p style="margin: 5px 0; font-size: 14px; color: #bb96ff; ">Your trusted online pharmacy and healthcare
+                    partner</p>
+            </div>
+
+            <!-- Footer Links -->
+           
+
+            <!-- Social Media Links -->
+            <div style="margin-bottom: 20px;">
+               
+
+            <!-- Copyright -->
+            
+                <p style="font-size: 12px; color: #999; margin: 0;">&copy; 2025 LIGHT HOUSE MEDICALS. All rights reserved.
+                </p>
+              
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
+
